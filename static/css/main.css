@@ -109,13 +109,11 @@ a {
 .functional-container {
   background-color: lightgray;
   width: 885px;
-  height: 222px;
   margin-top: -268px;
-  margin-bottom: -268px;
   margin-left: 380px;
-  margin-right: 0px;
   border-radius: 20px;
-  padding: 0%;
+  padding: 20px;
+  height: auto;
 }
 
 .c_id {
@@ -195,4 +193,17 @@ a {
   margin-left: 4em;
   margin-bottom: -2%;
   padding: 0.8em 1.2em;
+}
+
+#lacDIV {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+#lacDIV table {
+  width: 80%;
+  margin-top: 10px;
 }

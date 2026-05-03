@@ -1,233 +1,264 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+<!-- The template inherits from base.html -->
+ 
+{% block head %}
+<title>candidate-webapp</title>
+{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>candidate-webapp</title>
-    <!-- <link rel="stylesheet" href="css/main.css"> -->
-    <link href="static/css/main.css" rel="stylesheet">
-</head>
+{% block body %}
+<div class="container">
+    <header>
+        <img src="static/img/logo.png" alt="company logo" class="logo">
+        <ul class="show-desktop in-a-line">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contacts</a></li>
+        </ul>
+    </header>
+    <section>
+        <img src="static/img/empty-profile_transparent.png" alt="empty-profile logo" class="empty-profile">
+        <h1 class="mainhead">Web Application for IT Candidates</h1>
+        <h5 class="subhead">CRUD functionality for candidates</h5>
+    </section>
+</div>
 
-<body>
+<div class="button-container">
+    <ul>
+        <li><button id="cnc_btn" onclick="cnc_button_control()" class="cnc">Create new candidate</button></li>
+        <li><button id="ec_btn" onclick="ec_button_control()" class="cnc">Edit candidate</button></li>
+        <li><button id="dc_btn" onclick="dc_button_control()" class="cnc">Delete candidate</button></li>
+        <li><button id="lac_btn" onclick="lac_button_control()" class="cnc">List all candidate</button></li>
+        <li><button id="fc_btn" onclick="fc_button_control()" class="cnc">Filter candidate</button></li>
+    </ul>
+</div>
 
+<div class="functional-container">
     <div class="container">
-        <header>
-            <img src="static/img/logo.png" alt="company logo" class="logo">
-            <ul class="show-desktop in-a-line">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contacts</a></li>
-            </ul>
-        </header>
-        <section>
-            <img src="static/img/empty-profile_transparent.png" alt="empty-profile logo" class="empty-profile">
-            <h1 class="mainhead">Web Application for IT Candidates</h1>
-            <h5 class="subhead">CRUD functionality for candidates</h5>
-        </section>
-    </div>
+        <div id="cncDIV" style="display:none">
+            <form id="cncForm" method="POST" action="/" enctype="multipart/form-data">
+                <div class="c_name">
+                    <label>Candidate name :</label>
+                    <input type="text" class="cnc_c_name_input" aria-label="Default"
+                        placeholder="Enter-candidate-name" name="cnc-c-name-input">
+                </div>
+                <div class="c_age">
+                    <label>Candidate age :</label>
+                    <input type="number" class="cnc_c_age_input" placeholder="Enter-candidate-age"
+                        name="cnc-c-age-input" required>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="c_resume">
+                        <label>Attach resume' :</label>
+                        <input type="file" class="cnc_c_resume_input" id="CncCResume" name="resume">
+                    </div>
+                    <div class="input-group-append">
+                        <span class="c_resume_upload">Upload</span>
+                    </div>
+                </div>
+                <div class="c_language">
+                    <label>Programming Language's :</label>
+                    <input type="text" class="cnc_c_language_input" aria-label="Default"
+                        placeholder="Python, Java, C++" name="cnc-c-language-input">
+                </div>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+        <div id="ecDIV" style="display:none">
+            <form>
+                <div class="c_id">
+                    <label>Candidate ID :</label>
+                    <input type="number" class="ec_c_id_input" aria-label="Default"
+                        placeholder="Enter-candidate-ID">
+                </div>
+                <div class="c_name">
+                    <label>Candidate name :</label>
+                    <input type="text" class="ec_c_name_input" aria-label="Default"
+                        placeholder="Enter-candidate-name">
+                </div>
+                <div class="c_age">
+                    <label>Candidate age :</label>
+                    <input type="text" class="ec_c_age_input" aria-label="Default"
+                        placeholder="Enter-candidate-age">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="c_resume">
+                        <label>Attach resume' :</label>
+                        <input type="file" class="ec_c_resume_input" id="EcCResume">
+                    </div>
+                    <div class="input-group-append">
+                        <span class="c_resume_upload">Upload</span>
+                    </div>
+                </div>
+                <div class="c_language">
+                    <label>Programming Language's :</label>
+                    <input type="text" class="ec_c_language_input" aria-label="Default"
+                        placeholder="Python, Java, C++">
+                </div>
+                <button id="ec_submit_btn" onclick="ec_submit_button_control()" class="c_submit">Edit</button>
+            </form>
+        </div>
+        <div id="dcDIV" style="display:none">
 
-    <div class="button-container">
-        <ul>
-            <li><button id="cnc_btn" onclick="cnc_button_control()" class="cnc">Create new candidate</button></li>
-            <li><button id="ec_btn" onclick="ec_button_control()" class="cnc">Edit candidate</button></li>
-            <li><button id="dc_btn" onclick="dc_button_control()" class="cnc">Delete candidate</button></li>
-            <li><button id="lac_btn" onclick="lac_button_control()" class="cnc">List all candidate</button></li>
-            <li><button id="fc_btn" onclick="fc_button_control()" class="cnc">Filter candidate</button></li>
+            <h3>Delete Candidate</h3>
+
+            <form action="/delete" method="POST">
+                <div class="dc_id">
+                    <label>Candidate ID :</label>
+                    <input type="number" name="id" placeholder="Enter candidate ID" required>
+                </div>
+
+                <button type="submit" onclick="return confirm('Are you sure?')">
+                    Delete
+                </button>
+            </form>
+
+        </div>
+        <div id="lacDIV" style="display:none">
+
+            <h3>All Candidates</h3>
+
+            {% if candidates|length == 0 %}
+                <p>No candidates found</p>
+            {% else %}
+                <table border="1">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Languages</th>
+                        <th>Date Created</th>
+                        <th>Actions</th>
+                    </tr>
+
+                    {% for c in candidates %}
+                    <tr>
+                        <td>{{ c.id }}</td>
+                        <td>{{ c.name }}</td>
+                        <td>{{ c.age }}</td>
+                        <td>{{ c.languages }}</td>
+                        <td>{{ c.date_created.date() }}</td>
+
+                        <!-- DELETE BUTTON COLUMN -->
+                        <td>
+                            <form action="/delete/{{ c.id }}" method="GET" style="display:inline;">
+                                <button type="submit" onclick="return confirm('Delete this candidate?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+
+        </div>
+        <div id="fcDIV" style="display:none">
+            <div class="c_filter input-group mb-3">
+                <label class="input-group-text" for="inputGroupSelect01">Search by :</label>
+                <select class="custom-select" id="inputGroupSelect01">
+                    <option selected>Choose...</option>
+                    <option value="1">ID</option>
+                    <option value="2">age</option>
+                    <option value="3">language</option>
+                </select>
+                <input type="text" class="fc_c_input" aria-label="Default" placeholder="Enter-here">
+            </div>
+            <button id="fc_submit_btn" onclick="fc_submit_button_control()" class="fc_submit">Filter</button>
+            <form>
+                <div class="fc_c_output">
+                    <output>Results of Filter</output>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-container">
+        <ul class="footer-links-1">
+            <li><a href="#">Company address</a></li>
+        </ul>
+        <ul class="footer-links-2 in-a-line">
+            <li><a href="#">Term of Services</a></li>
+            <li><a href="#">Privacy Policy</a></li>
         </ul>
     </div>
+</footer>
 
-    <div class="functional-container">
-        <div class="container">
-            <div id="cncDIV" style="display:none">
-                <form id="cncForm" method="POST">
-                    <div class="c_name">
-                        <label>Candidate name :</label>
-                        <input type="text" class="cnc_c_name_input" aria-label="Default"
-                            placeholder="Enter-candidate-name" name="cnc-c-name-input">
-                    </div>
-                    <div class="c_age">
-                        <label>Candidate age :</label>
-                        <input type="text" class="cnc_c_age_input" aria-label="Default"
-                            placeholder="Enter-candidate-age" name="cnc-c-age-input">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="c_resume">
-                            <label>Attach resume' :</label>
-                            <input type="file" class="cnc_c_resume_input" id="CncCResume">
-                        </div>
-                        <div class="input-group-append">
-                            <span class="c_resume_upload">Upload</span>
-                        </div>
-                    </div>
-                    <div class="c_language">
-                        <label>Programming Language's :</label>
-                        <input type="text" class="cnc_c_language_input" aria-label="Default"
-                            placeholder="Python, Java, C++" name="cnc-c-language-input">
-                    </div>
-                    <button id="cnc_submit_btn" onclick="cnc_submit_button_control()" class="c_submit">Create</button>
-                </form>
-            </div>
-            <div id="ecDIV" style="display:none">
-                <form>
-                    <div class="c_id">
-                        <label>Candidate ID :</label>
-                        <input type="number" class="ec_c_id_input" aria-label="Default"
-                            placeholder="Enter-candidate-ID">
-                    </div>
-                    <div class="c_name">
-                        <label>Candidate name :</label>
-                        <input type="text" class="ec_c_name_input" aria-label="Default"
-                            placeholder="Enter-candidate-name">
-                    </div>
-                    <div class="c_age">
-                        <label>Candidate age :</label>
-                        <input type="text" class="ec_c_age_input" aria-label="Default"
-                            placeholder="Enter-candidate-age">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="c_resume">
-                            <label>Attach resume' :</label>
-                            <input type="file" class="ec_c_resume_input" id="EcCResume">
-                        </div>
-                        <div class="input-group-append">
-                            <span class="c_resume_upload">Upload</span>
-                        </div>
-                    </div>
-                    <div class="c_language">
-                        <label>Programming Language's :</label>
-                        <input type="text" class="ec_c_language_input" aria-label="Default"
-                            placeholder="Python, Java, C++">
-                    </div>
-                    <button id="ec_submit_btn" onclick="ec_submit_button_control()" class="c_submit">Edit</button>
-                </form>
-            </div>
-            <div id="dcDIV" style="display:none">
-                <form>
-                    <div class="dc_id">
-                        <label>Candidate ID :</label>
-                        <input type="number" class="ec_c_id_input" aria-label="Default"
-                            placeholder="Enter-candidate-ID">
-                    </div>
-                    <button id="dc_submit_btn" onclick="dc_submit_button_control()" class="d_submit">Delete</button>
-                </form>
-            </div>
-            <div id="lacDIV" style="display:none">
-                <div class="lac_submit">
-                    <button id="lac_submit_btn" onclick="lac_submit_button_control()">
-                        List all candidate
-                    </button>
-                </div>
-            </div>
-            <div id="fcDIV" style="display:none">
-                <div class="c_filter input-group mb-3">
-                    <label class="input-group-text" for="inputGroupSelect01">Search by :</label>
-                    <select class="custom-select" id="inputGroupSelect01">
-                        <option selected>Choose...</option>
-                        <option value="1">ID</option>
-                        <option value="2">age</option>
-                        <option value="3">language</option>
-                    </select>
-                    <input type="text" class="fc_c_input" aria-label="Default" placeholder="Enter-here">
-                </div>
-                <button id="fc_submit_btn" onclick="fc_submit_button_control()" class="fc_submit">Filter</button>
-                <form>
-                    <div class="fc_c_output">
-                        <output>Results of Filter</output>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<script>
 
-    <footer>
-        <div class="footer-container">
-            <ul class="footer-links-1">
-                <li><a href="#">Company address</a></li>
-            </ul>
-            <ul class="footer-links-2 in-a-line">
-                <li><a href="#">Term of Services</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-            </ul>
-        </div>
-    </footer>
+    var Candidate
 
-    <script>
+    var cnc_var = document.getElementById("cncDIV");
+    var ec_var = document.getElementById("ecDIV");
+    var dc_var = document.getElementById("dcDIV");
+    var lac_var = document.getElementById("lacDIV");
+    var fc_var = document.getElementById("fcDIV");
 
-        var Candidate
-
-        var cnc_var = document.getElementById("cncDIV");
-        var ec_var = document.getElementById("ecDIV");
-        var dc_var = document.getElementById("dcDIV");
-        var lac_var = document.getElementById("lacDIV");
-        var fc_var = document.getElementById("fcDIV");
-
-        function cnc_button_control() {
-            if (cnc_var.style.display === "none") {
-                cnc_var.style.display = "block";
-                ec_var.style.display = "none";
-                dc_var.style.display = "none";
-                lac_var.style.display = "none";
-                fc_var.style.display = "none";
-            } else {
-                cnc_var.style.display = "none";
-            }
+    function cnc_button_control() {
+        if (cnc_var.style.display === "none") {
+            cnc_var.style.display = "block";
+            ec_var.style.display = "none";
+            dc_var.style.display = "none";
+            lac_var.style.display = "none";
+            fc_var.style.display = "none";
+        } else {
+            cnc_var.style.display = "none";
         }
-        function ec_button_control() {
-            if (ec_var.style.display === "none") {
-                cnc_var.style.display = "none";
-                ec_var.style.display = "block";
-                dc_var.style.display = "none";
-                lac_var.style.display = "none";
-                fc_var.style.display = "none";
-            } else {
-                ec_var.style.display = "none";
-            }
+    }
+    function ec_button_control() {
+        if (ec_var.style.display === "none") {
+            cnc_var.style.display = "none";
+            ec_var.style.display = "block";
+            dc_var.style.display = "none";
+            lac_var.style.display = "none";
+            fc_var.style.display = "none";
+        } else {
+            ec_var.style.display = "none";
         }
-        function dc_button_control() {
-            if (dc_var.style.display === "none") {
-                cnc_var.style.display = "none";
-                ec_var.style.display = "none";
-                dc_var.style.display = "block";
-                lac_var.style.display = "none";
-                fc_var.style.display = "none";
-            } else {
-                dc_var.style.display = "none";
-            }
+    }
+    function dc_button_control() {
+        if (dc_var.style.display === "none") {
+            cnc_var.style.display = "none";
+            ec_var.style.display = "none";
+            dc_var.style.display = "block";
+            lac_var.style.display = "none";
+            fc_var.style.display = "none";
+        } else {
+            dc_var.style.display = "none";
         }
-        function lac_button_control() {
-            if (lac_var.style.display === "none") {
-                cnc_var.style.display = "none";
-                ec_var.style.display = "none";
-                dc_var.style.display = "none";
-                lac_var.style.display = "block";
-                fc_var.style.display = "none";
-            } else {
-                lac_var.style.display = "none";
-            }
+    }
+    function lac_button_control() {
+        if (lac_var.style.display === "none") {
+            cnc_var.style.display = "none";
+            ec_var.style.display = "none";
+            dc_var.style.display = "none";
+            lac_var.style.display = "block";
+            fc_var.style.display = "none";
+        } else {
+            lac_var.style.display = "none";
         }
-        function fc_button_control() {
-            if (fc_var.style.display === "none") {
-                cnc_var.style.display = "none";
-                ec_var.style.display = "none";
-                dc_var.style.display = "none";
-                lac_var.style.display = "none";
-                fc_var.style.display = "block";
-            } else {
-                fc_var.style.display = "none";
-            }
+    }
+    function fc_button_control() {
+        if (fc_var.style.display === "none") {
+            cnc_var.style.display = "none";
+            ec_var.style.display = "none";
+            dc_var.style.display = "none";
+            lac_var.style.display = "none";
+            fc_var.style.display = "block";
+        } else {
+            fc_var.style.display = "none";
         }
+    }
 
-        function cnc_submit_button_control() {
-            document.getElementById("cncForm").submit();
-        }
+    function cnc_submit_button_control() {
+        document.getElementById("cncForm").submit();
+    }
 
-        function lac_submit_button_control() {
-            document.getElementById('lacDIV').innerHTML += Candidate
-        }
+    function lac_submit_button_control() {
+        document.getElementById('lacDIV').innerHTML += Candidate
+    }
 
-    </script>
-</body>
-
-</html>
+</script>
+{% endblock %}

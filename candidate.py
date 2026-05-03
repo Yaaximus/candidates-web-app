@@ -1,15 +1,15 @@
-class Candidate():
+# class Candidate():
 
-    count = 1
+#     count = 1
 
-    def __init__(self, name, age, language):
+#     def __init__(self, name, age, language):
 
-        self._name = name
-        self._age = age
-        self._language = language
-        self._id = Candidate.count
+#         self._name = name
+#         self._age = age
+#         self._language = language
+#         self._id = Candidate.count
 
-        Candidate.count += 1
+#         Candidate.count += 1
 
 
 # api = Api(app)

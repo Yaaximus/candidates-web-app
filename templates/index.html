@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <div class="c_language">
-                    <label>Programming Language's :</label>
+                    <label>Programming Languages :</label>
                     <input type="text" class="cnc_c_language_input" aria-label="Default"
                         placeholder="Python, Java, C++" name="cnc-c-language-input">
                 </div>
@@ -65,37 +65,29 @@
             </form>
         </div>
         <div id="ecDIV" style="display:none">
-            <form>
+            <form method="POST" action="/edit">
+                
                 <div class="c_id">
                     <label>Candidate ID :</label>
-                    <input type="number" class="ec_c_id_input" aria-label="Default"
-                        placeholder="Enter-candidate-ID">
+                    <input type="number" name="id" placeholder="Enter candidate ID" required>
                 </div>
+
                 <div class="c_name">
                     <label>Candidate name :</label>
-                    <input type="text" class="ec_c_name_input" aria-label="Default"
-                        placeholder="Enter-candidate-name">
+                    <input type="text" name="name" placeholder="Leave blank if no change">
                 </div>
+
                 <div class="c_age">
                     <label>Candidate age :</label>
-                    <input type="text" class="ec_c_age_input" aria-label="Default"
-                        placeholder="Enter-candidate-age">
+                    <input type="number" name="age" placeholder="Leave blank if no change">
                 </div>
-                <div class="input-group mb-3">
-                    <div class="c_resume">
-                        <label>Attach resume' :</label>
-                        <input type="file" class="ec_c_resume_input" id="EcCResume">
-                    </div>
-                    <div class="input-group-append">
-                        <span class="c_resume_upload">Upload</span>
-                    </div>
-                </div>
+
                 <div class="c_language">
-                    <label>Programming Language's :</label>
-                    <input type="text" class="ec_c_language_input" aria-label="Default"
-                        placeholder="Python, Java, C++">
+                    <label>Programming Languages :</label>
+                    <input type="text" name="languages" placeholder="Leave blank if no change">
                 </div>
-                <button id="ec_submit_btn" onclick="ec_submit_button_control()" class="c_submit">Edit</button>
+
+                <button type="submit">Update</button>
             </form>
         </div>
         <div id="dcDIV" style="display:none">
@@ -141,7 +133,7 @@
 
                         <!-- DELETE BUTTON COLUMN -->
                         <td>
-                            <form action="/delete/{{ c.id }}" method="GET" style="display:inline;">
+                            <form action="/delete/{{ c.id }}" method="POST" style="display:inline;">
                                 <button type="submit" onclick="return confirm('Delete this candidate?')">
                                     Delete
                                 </button>
@@ -154,22 +146,50 @@
 
         </div>
         <div id="fcDIV" style="display:none">
-            <div class="c_filter input-group mb-3">
-                <label class="input-group-text" for="inputGroupSelect01">Search by :</label>
-                <select class="custom-select" id="inputGroupSelect01">
-                    <option selected>Choose...</option>
-                    <option value="1">ID</option>
-                    <option value="2">age</option>
-                    <option value="3">language</option>
+
+            <h3>Filter Candidates</h3>
+
+            <form method="POST" action="/">
+
+                <select name="filter_type" required>
+                    <option value="">Choose...</option>
+                    <option value="id">ID</option>
+                    <option value="age">Age</option>
+                    <option value="language">Language</option>
                 </select>
-                <input type="text" class="fc_c_input" aria-label="Default" placeholder="Enter-here">
-            </div>
-            <button id="fc_submit_btn" onclick="fc_submit_button_control()" class="fc_submit">Filter</button>
-            <form>
-                <div class="fc_c_output">
-                    <output>Results of Filter</output>
-                </div>
+
+                <input type="text" name="value" placeholder="Enter value" required>
+
+                <button type="submit">Filter</button>
+
             </form>
+
+            {% if show_filter %}
+
+                {% if filtered_candidates|length == 0 %}
+                    <p>No results found</p>
+                {% else %}
+                    <table border="1">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Languages</th>
+                        </tr>
+
+                        {% for c in filtered_candidates %}
+                        <tr>
+                            <td>{{ c.id }}</td>
+                            <td>{{ c.name }}</td>
+                            <td>{{ c.age }}</td>
+                            <td>{{ c.languages }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+
+            {% endif %}
+
         </div>
     </div>
 </div>
@@ -187,8 +207,6 @@
 </footer>
 
 <script>
-
-    var Candidate
 
     var cnc_var = document.getElementById("cncDIV");
     var ec_var = document.getElementById("ecDIV");
@@ -256,9 +274,36 @@
         document.getElementById("cncForm").submit();
     }
 
-    function lac_submit_button_control() {
-        document.getElementById('lacDIV').innerHTML += Candidate
-    }
+    
 
+</script>
+
+<script>
+    window.onload = function () {
+
+        let active = "{{ active_div }}";
+
+        var fc_var = document.getElementById("fcDIV");
+        var cnc_var = document.getElementById("cncDIV");
+        var ec_var = document.getElementById("ecDIV");
+        var dc_var = document.getElementById("dcDIV");
+        var lac_var = document.getElementById("lacDIV");
+
+        if (active === "fc") {
+            fc_var.style.display = "block";
+            cnc_var.style.display = "none";
+            ec_var.style.display = "none";
+            dc_var.style.display = "none";
+            lac_var.style.display = "none";
+        }
+
+        if (active === "lac") {
+        lac_var.style.display = "block";
+        cnc_var.style.display = "none";
+        ec_var.style.display = "none";
+        dc_var.style.display = "none";
+        fc_var.style.display = "none";
+        }
+    }
 </script>
 {% endblock %}

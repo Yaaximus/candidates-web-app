@@ -1,17 +1,14 @@
-from flask import Flask, request, redirect, url_for, render_template
-# from flask_restful import Resource, Api, reqparse
+from flask import Flask, request, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from datetime import datetime, timezone
-# from candidate import Candidate
 
 app = Flask(__name__)
 
-# Telling app where the databasae is located, /// for relative path, //// for absolute path, test.db is the database name, everything will be stored in it
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-# Initialize database
 db = SQLAlchemy(app)
 
-# Create a model
+
 class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -19,42 +16,76 @@ class Candidate(db.Model):
     age = db.Column(db.Integer, default=0)
     date_created = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
-    # Every time we make a new element, this will return the task and its unique id
     def __repr__(self):
-        return '<Candidate %r>' % self.id
+        return f'<Candidate {self.id}>'
 
 
 @app.route('/', methods=["GET", "POST"])
 def index():
 
+    candidates = Candidate.query.order_by(Candidate.date_created).all()
+
+    filtered_candidates = []
+    show_filter = False
+    active_div = "lac"
+
     if request.method == "POST":
-        name = request.form['cnc-c-name-input'].strip()
-        languages = request.form['cnc-c-language-input'].strip()
-        age = int(request.form['cnc-c-age-input'].strip())
 
-        # ✅ prevent empty or whitespace-only tasks
-        if not name.strip():
-            return redirect('/')
-        
-        # ✅ prevent empty or whitespace-only tasks
-        if not languages.strip():
-            return redirect('/')
-        
-        new_candidate = Candidate(name=name, age=age, languages=languages)
+        # ================= CREATE =================
+        if 'cnc-c-name-input' in request.form:
+            name = request.form['cnc-c-name-input'].strip()
+            languages = request.form['cnc-c-language-input'].strip()
+            age = request.form['cnc-c-age-input']
 
-        try:
+            if not name or not languages or not age:
+                return redirect('/')
+
+            try:
+                age = int(age)
+            except:
+                return "Invalid age"
+
+            new_candidate = Candidate(name=name, age=age, languages=languages)
+
             db.session.add(new_candidate)
             db.session.commit()
             return redirect('/')
-        except Exception as e:
-            return str(e)        
 
-    else:
-        candidates = Candidate.query.order_by(Candidate.date_created).all()
-        return render_template('index.html', candidates=candidates)
-    
+        # ================= FILTER =================
+        elif 'filter_type' in request.form:
+            filter_type = request.form['filter_type']
+            value = request.form['value'].strip()
 
-@app.route('/delete/<int:id>')
+            show_filter = True
+            active_div = "fc"
+
+            if filter_type == "id":
+                try:
+                    filtered_candidates = Candidate.query.filter_by(id=int(value)).all()
+                except:
+                    filtered_candidates = []
+
+            elif filter_type == "age":
+                try:
+                    filtered_candidates = Candidate.query.filter_by(age=int(value)).all()
+                except:
+                    filtered_candidates = []
+
+            elif filter_type == "language":
+                filtered_candidates = Candidate.query.filter(
+                    Candidate.languages.contains(value)
+                ).all()
+
+    return render_template(
+        'index.html',
+        candidates=candidates,
+        filtered_candidates=filtered_candidates,
+        show_filter=show_filter,
+        active_div=active_div
+    )
+
+
+@app.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
     candidate_to_delete = Candidate.query.get_or_404(id)
 
@@ -82,6 +113,36 @@ def delete_by_id():
     except:
         return "Error deleting candidate"
 
+
+@app.route('/edit', methods=['POST'])
+def edit_candidate():
+    candidate_id = request.form['id']
+    candidate = Candidate.query.get_or_404(candidate_id)
+
+    name = request.form.get('name')
+    age = request.form.get('age')
+    languages = request.form.get('languages')
+
+    # Only update if value is provided
+    if name and name.strip():
+        candidate.name = name.strip()
+
+    if age and age.strip():
+        try:
+            candidate.age = int(age)
+        except:
+            return "Invalid age"
+
+    if languages and languages.strip():
+        candidate.languages = languages.strip()
+
+    try:
+        db.session.commit()
+        return redirect('/')
+    except:
+        return "Failed to update candidate"
+    
+    
 
 if __name__ == "__main__":
 

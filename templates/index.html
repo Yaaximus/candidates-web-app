@@ -8,9 +8,11 @@
 {% block body %}
 <div class="container">
     <header>
-        <img src="static/img/logo.png" alt="company logo" class="logo">
+        <a href="{{ url_for('index') }}">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="company logo" class="logo">
+        </a>
         <ul class="show-desktop in-a-line">
-            <li><a href="#">Home</a></li>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
             <li><a href="#">Services</a></li>
             <li><a href="#">About</a></li>
             <li><a href="#">Contacts</a></li>
@@ -46,15 +48,6 @@
                     <label>Candidate age :</label>
                     <input type="number" class="cnc_c_age_input" placeholder="Enter-candidate-age"
                         name="cnc-c-age-input" required>
-                </div>
-                <div class="input-group mb-3">
-                    <div class="c_resume">
-                        <label>Attach resume' :</label>
-                        <input type="file" class="cnc_c_resume_input" id="CncCResume" name="resume">
-                    </div>
-                    <div class="input-group-append">
-                        <span class="c_resume_upload">Upload</span>
-                    </div>
                 </div>
                 <div class="c_language">
                     <label>Programming Languages :</label>
@@ -175,6 +168,8 @@
                             <th>Name</th>
                             <th>Age</th>
                             <th>Languages</th>
+                            <th>Date Created</th>
+                            <th>Actions</th>
                         </tr>
 
                         {% for c in filtered_candidates %}
@@ -183,6 +178,15 @@
                             <td>{{ c.name }}</td>
                             <td>{{ c.age }}</td>
                             <td>{{ c.languages }}</td>
+                            <td>{{ c.date_created.date() }}</td>
+
+                            <td>
+                                <form action="/delete/{{ c.id }}" method="POST" style="display:inline;">
+                                    <button type="submit" onclick="return confirm('Delete this candidate?')">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>

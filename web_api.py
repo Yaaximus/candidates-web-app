@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 
 
@@ -20,9 +20,6 @@ class Candidate(db.Model):
         return f'<Candidate {self.id}>'
     
 
-with app.app_context():
-    db.create_all()
-    
 
 @app.route('/', methods=["GET", "POST"])
 def index():
@@ -150,4 +147,4 @@ def edit_candidate():
 
 if __name__ == "__main__":
 
-    app.run(host="0.0.0.0")
+    app.run(debug=True, port=3000)
